@@ -1,0 +1,21 @@
+{
+    "FileVersion" : 3,
+    "FriendlyName" : "RyroNZs Master Server Client",
+    "Version" : 1,
+    "VersionName": "15.6.01",
+    "EngineVersion" : 1579795,
+    "Description" : "Networking library designed to interface with RyroNZs Python Master Server.",
+    "Category" : "Networking",
+    "CreatedBy" : "Ryan Post",
+    "CreatedByURL" : "http://ryanpost.me",
+    "CanContainContent" : "true",
+	
+	"Modules" :
+    [
+        {
+            "Name" : "MasterServer",
+            "Type" : "Runtime",
+			"LoadingPhase" : "PreDefault"
+        }
+    ]
+}
