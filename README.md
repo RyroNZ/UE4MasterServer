@@ -199,13 +199,16 @@ This should ideally be in your GameInstance class.
 	MasterServer->ServerUnregisteredEvent.AddDynamic(this, &MyGameInstance::OnServerUnregistered);
 	//Do the unregistering
 	MasterServer->UnregisterServer()
-	```
+```
+
 ####Checking In
+
 ```cpp
     //Bind to the delegate
     MasterServer->ServerCheckInEvent.AddDynamic(this, &MyGameInstance::ServerCheckedIn);
   ```  
 ####Requesting the Serverlist
+
 ```cpp
     //Bind to the delegate
 	MasterServer->ServerListReceivedEvent.AddDynamic(this, &MyGameInstance::OnServerListReceived);
