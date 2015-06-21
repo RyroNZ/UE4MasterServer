@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from setuptools import setup
 setup(name='MasterServer',
       description="HTTP Master Server database designed to interface with RyroNZ's UE4 Client Plug-in",
-      license="GNU General Public License 3"
+      license="GNU General Public License 3",
       version='15.06.01',
       py_modules=['MasterServer'],
       install_requires = ["peewee",
