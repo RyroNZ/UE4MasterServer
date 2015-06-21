@@ -56,37 +56,39 @@ struct FHttpRequest
 
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HTTP Request")
 		FString TheDest;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HTTP Request")
 		FString TheData;
-
-	UPROPERTY()
+		
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HTTP Request")
 		FString mID;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HTTP Request")
 		FString qID;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HTTP Request")
 		FString delim;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HTTP Request")
 		FString RequestVerb;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HTTP Request")
 		EHttpRequestType RequestType;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HTTP Request")
 		FString JsonObjectField;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HTTP Request")
 		EHttpResponse ResponseType;
+
 
 	void SetData(FString newData)
 	{
 		TheData = newData;
 	}
+
 
 	void SetDestination(FString& newDest)
 	{
@@ -98,6 +100,7 @@ struct FHttpRequest
 		mID = newMID;
 		qID = newQID;
 	}
+
 
 	void SetRequestType(EHttpRequestType NewRequestType)
 	{
@@ -136,7 +139,7 @@ struct FServerInformation
 {
 	GENERATED_USTRUCT_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
 		FString Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
@@ -160,10 +163,12 @@ struct FServerInformation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
 		int32 Ping;
 
+
 	FString GetFullAddress()
 	{
 		return Ip + ":" + Port;
 	}
+
 
 	void UpdatePing()
 	{
@@ -219,7 +224,7 @@ struct FServerInformation
 /**
 *
 */
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class MASTERSERVER_API UMasterServerFunctions : public UObject
 {
 	GENERATED_UCLASS_BODY()
@@ -239,7 +244,10 @@ public:
 	TArray<FServerInformation> ServerList;
 
 public:
+
+	UFUNCTION(BlueprintCallable, Category = "Networking")
 	void Initalize(UGameInstance* NewParent, FString Ip, FString Port);
+	UFUNCTION(BlueprintCallable, Category = "Networking")
 	void TransmitRequest(FHttpRequest& request);
 	void StartTransmission();
 	void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
@@ -300,4 +308,8 @@ public:
 	FString ServerToJSON(FServerInformation InServer, FHttpRequest InRequest);
 
 
+
+	// Included so blueprint people can create class
+	UFUNCTION(BlueprintPure, meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", FriendlyName = "Create Object From Blueprint", CompactNodeTitle = "Create", Keywords = "new create blueprint"), Category = Game)
+		static UObject* NewObjectFromBlueprint(UObject* WorldContextObject, TSubclassOf<UObject> UC);
 };

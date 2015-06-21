@@ -331,3 +331,11 @@ FString UMasterServerFunctions::ServerToJSON(FServerInformation InServer, FHttpR
 
 	return OutputString;
 }
+
+UObject* UMasterServerFunctions::NewObjectFromBlueprint(UObject* WorldContextObject, TSubclassOf<UObject> UC)
+{
+	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject);
+	UObject* tempObject = NewObject<UMasterServerFunctions>(UC->StaticClass());
+
+	return tempObject;
+}
