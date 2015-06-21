@@ -33,7 +33,7 @@ Ensure the plugin is enabled (by default, this should already be the case)
 <br>
 <br>
 
-![plugins window](http://ryanpost.me/wp-content/uploads/2015/06/UE4Plugins.png)
+![plugins window](http://ryanpost.me/wp-content/uploads/2015/06/plugins.png)
 
 ##Server Installation
 
@@ -82,13 +82,17 @@ Some configuration options are provided as globals in the MasterServer.py, these
 <br>Default=8081
 
 >TICK_FREQUENCY
-<br>This defines how frequently the server will process the queues and update the serverlist in seconds. Having a higher value will reduce load, at the cost of the clients potentially having a delayed serverlist.
+<br>This defines how frequently the server will process the queues and update the serverlist in seconds. Having a higher value will reduce load, at the cost of the clients potentially having a outdated serverlist.
 <br>Default=1
 
 >CHECK_IN_FREQUENCY
-<br>This defines how frequently the server is required to check in, to confirm it is still active and to update it's registration in seconds. (ie. player count changes, or map changes)
+<br>This defines how frequently the server is required to check in, to confirm it is still active and to update it's registration in seconds. (ie. player count changes, or map changes). This is a server side value, so any clients using the plugin will reflect this change.
 <br>Default=30
 
 >MISSED_CHECKINS_BEFORE_INACTIVE
 <br>This defines how many check ins the server can miss before it is set to inactive and not served up in the serverlist. <br>Default=2
+
+>LOGGING
+<br>This defines if the server should log requests, and transactions (ie. sending serverlist, registering server, purging server, etc)
+<br>Default=True
 

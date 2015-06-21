@@ -40,6 +40,8 @@ PORT = 8081
 CHECK_IN_FREQUENCY = 30
 MISSED_CHECKINS_BEFORE_INACTIVE = 2
 
+LOG_REQUESTS = True
+
 server_db = SqliteDatabase('server.db')
 log_db = SqliteDatabase('log.db')
 
@@ -357,7 +359,8 @@ class MainThread():
         self.server_deregistration_queue.append(server)
 
     def queue_log(self, type, message, client=None):
-        self.log_queue.append({"type": type, "message": message, "client": client})
+        if LOG_REQUESTS:
+            self.log_queue.append({"type": type, "message": message, "client": client})
 
 
 try:
