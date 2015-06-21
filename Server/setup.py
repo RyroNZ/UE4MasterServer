@@ -21,11 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from setuptools import setup
 setup(name='MasterServer',
-      description="Master Server database designed to interface with RyroNZ's UE4 Networking Plugin",
+      description="HTTP Master Server database designed to interface with RyroNZ's UE4 Client Plug-in",
       license="GNU General Public License 3"
       version='15.06.01',
       py_modules=['MasterServer'],
-      intall_requires = ["peewee",
+      install_requires = ["peewee",
                          "flask-peewee",
                          "mongoengine",
                          "requests",
