@@ -370,6 +370,6 @@ try:
 
     httpd.serve_forever()
 except KeyboardInterrupt:
-    print('^C received, shutting down the web server')
+    print('^C received. Shutting down the HTTP server.')
     httpd.server_close()
     main_thread.stop_ticking()
