@@ -38,6 +38,7 @@ PORT = 8081
 
 # How often registered servers should be required to check in
 CHECK_IN_FREQUENCY = 30
+MISSED_CHECKINS_BEFORE_PURGE = 2
 
 server_db = SqliteDatabase('server.db')
 log_db = SqliteDatabase('log.db')
@@ -328,7 +329,7 @@ class MainThread():
     def set_expired_servers_inactive(self):
         now = datetime.now(timezone.utc).timestamp()
         expired_servers = Server.update(is_active=False).where(
-            (Server.registration_time + CHECK_IN_FREQUENCY * 2 < now) & (Server.is_active == True)).execute()
+            (Server.registration_time + CHECK_IN_FREQUENCY * MISSED_CHECKINS_BEFORE_PURGE < now) & (Server.is_active == True)).execute()
         if expired_servers > 0:
             self.queue_log(type="Information", message="Purged " + str(expired_servers) + " expired servers.")
             self.regenerate_serverlist = True
