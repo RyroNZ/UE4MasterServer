@@ -137,10 +137,10 @@ class MyServer(http.server.BaseHTTPRequestHandler):
 
     # Client has requested the server list, send this.
     def handle_send_serverlist(self):
-        self.main_thread.queue_log(type="Information",
+        main_thread.queue_log(type="Information",
                                    message="Sending serverlist to " + self.get_formatted_ip(),
                                    client=self.client_address)
-        self.wfile.write(self.main_thread.latest_serverlist)
+        self.wfile.write(main_thread.latest_serverlist)
 
     def do_PUT(self):
         self.send_response(200)
@@ -256,7 +256,6 @@ class MainThread():
                 server[SERVER_ID] = Server.generate_id(server['ip'], server['port'])
                 server[SERVER_REGISTRATION_TIME] = datetime.now(timezone.utc).timestamp()
                 server[SERVER_ISACTIVE] = True
-
                 try:
                     Server.create(**server)
                 except peewee.IntegrityError:
