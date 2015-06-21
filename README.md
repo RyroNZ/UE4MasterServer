@@ -154,7 +154,7 @@ To enable to plugin functionality on the C++ side of things, we need to add it t
 YourProject.Build.cs should be located in YourProject/Source/YourProject/YourProject.Build.CS
 Append "MasterServer" to this PublicDependencyModuleNames like below.
 
-
+```cpp
     public class Code10 : ModuleRules
     {
     	public Code10(TargetInfo Target)
@@ -162,7 +162,7 @@ Append "MasterServer" to this PublicDependencyModuleNames like below.
             PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "MasterServer"});
     	}
     }
-
+```
 Include the header in your project
 
     #include "MasterServerFunctions.h"
@@ -171,12 +171,12 @@ Include the header in your project
 ####Initalize the plugin
 
 This should ideally be in your GameInstance class.
-
+```cpp
  	MasterServer = NewObject<UMasterServerFunctions>(UMasterServerFunctions::StaticClass());
  	MasterServer->Initalize(this, "127.0.0.1", "8081");
-
+```
 ####Register a server
-
+```cpp
  	FServerInformation SomeServer;
  
  	SomeServer.Name = "MyServerName";
@@ -187,28 +187,31 @@ This should ideally be in your GameInstance class.
  	SomeServer.CurrentPlayers = 0;
  	SomeServer.MaxPlayers = 10;
 
-    #Bind to the delegate
+    //Bind to the delegate
     MasterServer->ServerRegisteredEvent.AddDynamic(this, &MyGameInstance::OnServerRegistered);
-    #Do the registering
+    //Do the registering
  	MasterServer->RegisterServer(SomeServer);
-
+```
 
 ####Unregister a server
-    #Bind to the delegate
+```cpp
+    //Bind to the delegate
 	MasterServer->ServerUnregisteredEvent.AddDynamic(this, &MyGameInstance::OnServerUnregistered);
-	#Do the unregistering
+	//Do the unregistering
 	MasterServer->UnregisterServer()
-	
+	```
 ####Checking In
-    #Bind to the delegate
+```cpp
+    //Bind to the delegate
     MasterServer->ServerCheckInEvent.AddDynamic(this, &MyGameInstance::ServerCheckedIn);
-    
+  ```  
 ####Requesting the Serverlist
-    #Bind to the delegate
+```cpp
+    //Bind to the delegate
 	MasterServer->ServerListReceivedEvent.AddDynamic(this, &MyGameInstance::OnServerListReceived);
-	#Request the serverlist
+	//Request the serverlist
 	MasterServer->RequestServerList();
+```
 
-
-<br
+<br>
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
