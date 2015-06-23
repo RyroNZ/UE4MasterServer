@@ -22,7 +22,7 @@ If you have any queries, feedback or concerns please email me at ryan@ryanpost.m
 
 There are a couple of different ways to integrate this plugin into your project. But for our purposes we will go for project integration.
 
-Due to some limitations with STRUCTS and blueprint, the functions in the struct are not available. I have included a blueprint helper class under Client/Blueprint/BP_MasterServerHelper.UASSET that recreates these functions.
+
 
 ###Code Based Project
 
@@ -115,6 +115,9 @@ We will go through the process to initalize the plugin, register, and deregister
 
 ###Blueprint
 This plugin is able to be completely used in blueprint, so we will demonstrate how to do this.
+
+Due to some limitations with STRUCTS and blueprint, the functions in the struct are not available. I have included a blueprint helper class under Client/Blueprint/BP_MasterServerHelper.UASSET that recreates these functions.
+
 ####Intialize the plugin
 This is what we will need to do before we start anything, it is recommended to do this in the Game Instance class so that it does not get cleaned up during game play (ie. change map and have the client stop ticking).
 
