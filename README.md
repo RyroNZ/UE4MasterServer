@@ -14,9 +14,6 @@ This is quite basic at this stage, but I will be updating this in the coming wee
 
 If you have any queries, feedback or concerns please email me at ryan@ryanpost.me.
 
-If you found this useful in anyway, please buy me a beer, anything helps! <br><br>
-<a href='https://pledgie.com/campaigns/29562'><img alt='Click here to lend your support to: Master Server with Unreal Engine 4 Plugin and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/29562.png?skin_name=chrome' border='0' ></a>
-<br><br>
 ## Setup
 ---
 <br>
