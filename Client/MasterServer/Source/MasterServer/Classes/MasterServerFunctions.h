@@ -28,7 +28,8 @@ enum class EHttpRequestType : uint8
 	HRT_RegisterServer          UMETA(DisplayName = "Register Server"),
 	HRT_UnregisterServer		UMETA(DisplayName = "Unregister Server"),
 	HRT_CheckIn					UMETA(DisplayName = "Check In"),
-	HRT_ReceiveServerList		UMETA(DisplayName = "Receive Server List")
+	HRT_ReceiveServerList		UMETA(DisplayName = "Receive Server List"),
+	HRT_PingServer				UMETA(DisplayName = "Ping Server")
 };
 
 UENUM(BlueprintType)
@@ -44,11 +45,89 @@ enum class EHttpResponse : uint8
 
 
 #include "Http.h"
+#include "httpd.h"
+#include <ctime>
 
 // Bug requires .generated to be included after enums for delegates using enum types.
 #include "MasterServerFunctions.generated.h"
 
+USTRUCT(BlueprintType)
+struct FServerInformation
+{
+	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
+		FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
+		FString Ip;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
+		FString Port;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
+		FString GameMode;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
+		FString Map;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
+		int32 MaxPlayers;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
+		int32 CurrentPlayers;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
+		int32 Ping;
+
+
+	FString GetFullAddress()
+	{
+		return Ip + ":" + Port;
+	}
+
+	void GetDataFromJSON(TSharedPtr<FJsonObject> JsonArray)
+	{
+		Name = JsonArray->GetStringField("name");
+		Ip = JsonArray->GetStringField("ip");
+		Port = JsonArray->GetStringField("port");
+		GameMode = JsonArray->GetStringField("game_mode");
+		Map = JsonArray->GetStringField("map");
+		MaxPlayers = JsonArray->GetNumberField("max_players");
+		CurrentPlayers = JsonArray->GetNumberField("current_players");
+	}
+
+	TSharedPtr<FJsonObject> GenerateJSONObject()
+	{
+		TSharedPtr<FJsonObject> OutJsonArray = MakeShareable(new FJsonObject());
+
+		OutJsonArray->SetStringField("name", Name);
+		OutJsonArray->SetStringField("port", Port);
+		OutJsonArray->SetStringField("game_mode", GameMode);
+		OutJsonArray->SetStringField("map", Map);
+		OutJsonArray->SetNumberField("max_players", MaxPlayers);
+		OutJsonArray->SetNumberField("current_players", CurrentPlayers);
+
+		return OutJsonArray;
+	}
+
+	bool IsEmpty()
+	{
+		if (Name.IsEmpty() || Port.IsEmpty())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	FServerInformation()
+	{
+		Name = ""; Ip = ""; Port = ""; GameMode = ""; Map = ""; MaxPlayers = -1; CurrentPlayers = -1; Ping = -1;
+	}
+};
 
 USTRUCT(BlueprintType)
 struct FHttpRequest
@@ -56,12 +135,12 @@ struct FHttpRequest
 
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HTTP Request")
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HTTP Request")
 		FString TheDest;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HTTP Request")
 		FString TheData;
-		
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HTTP Request")
 		FString mID;
 
@@ -82,6 +161,8 @@ struct FHttpRequest
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HTTP Request")
 		EHttpResponse ResponseType;
+	
+	FServerInformation UpdateServer;
 
 
 	void SetData(FString newData)
@@ -134,90 +215,6 @@ struct FHttpRequest
 	}
 };
 
-USTRUCT(BlueprintType)
-struct FServerInformation
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
-		FString Name;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
-		FString Ip;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
-		FString Port;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
-		FString GameMode;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
-		FString Map;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
-		int32 MaxPlayers;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
-		int32 CurrentPlayers;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
-		int32 Ping;
-
-
-	FString GetFullAddress()
-	{
-		return Ip + ":" + Port;
-	}
-
-
-	void UpdatePing()
-	{
-		// TODO: Ping the server
-	}
-
-	void GetDataFromJSON(TSharedPtr<FJsonObject> JsonArray)
-	{
-		Name = JsonArray->GetStringField("name");
-		Ip = JsonArray->GetStringField("ip");
-		Port = JsonArray->GetStringField("port");
-		GameMode = JsonArray->GetStringField("game_mode");
-		Map = JsonArray->GetStringField("map");
-		MaxPlayers = JsonArray->GetNumberField("max_players");
-		CurrentPlayers = JsonArray->GetNumberField("current_players");
-	}
-
-	TSharedPtr<FJsonObject> GenerateJSONObject()
-	{
-		TSharedPtr<FJsonObject> OutJsonArray = MakeShareable(new FJsonObject());
-
-		OutJsonArray->SetStringField("name", Name);
-		OutJsonArray->SetStringField("port", Port);
-		OutJsonArray->SetStringField("game_mode", GameMode);
-		OutJsonArray->SetStringField("map", Map);
-		OutJsonArray->SetNumberField("max_players", MaxPlayers);
-		OutJsonArray->SetNumberField("current_players", CurrentPlayers);
-
-		return OutJsonArray;
-	}
-
-	bool IsEmpty()
-	{
-		if (Name.IsEmpty() || Port.IsEmpty())
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	FServerInformation()
-	{
-		Name = ""; Ip = ""; Port = ""; GameMode = ""; Map = ""; MaxPlayers = -1; CurrentPlayers = -1; Ping = -1;
-	}
-};
-
 
 /**
 *
@@ -227,10 +224,12 @@ class MASTERSERVER_API UMasterServerFunctions : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-public:
+private:
 
 	void StartupModule();
 	void ShutdownModule();
+
+	UGameInstance* GameInstance;
 
 	FHttpModule* Http;
 	FString TargetHost;
@@ -241,14 +240,41 @@ public:
 
 	TArray<FServerInformation> ServerList;
 
+	static void StaticHTTPHandler(HttpResponse* Response, void* UserData);
+	Httpd* HTTPServer;
+
+	std::clock_t	start;
+
+	void HttpProcess();
+
+	FTimerHandle HttpProcess_Handle;
+
+	void StartTransmission();
+	void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+
+	TArray<uint8> FStringToBinaryArray(FString InString);
+	FString BinaryArrayToFString(TArray<uint8> InBinaryArray);
+
+	FString DecompressBytes(TArray<uint8> BinaryArray);
+	TArray<uint8> CompressBytes(FString UncompressedString);
+
+	void ProcessJSON(FString JsonString);
+	void ProcessText(FString ContentString);
+
+	bool bTransmitSuccessful;
+	float CheckInFrequency;
+	void ProcessServerList(TSharedPtr<FJsonObject> JsonParsed);
+	void Closed(FString Message);
+
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Networking")
 	void Initalize(UGameInstance* NewParent, FString Ip, FString Port);
 	UFUNCTION(BlueprintCallable, Category = "Networking")
+	void Shutdown();
+	UFUNCTION(BlueprintCallable, Category = "Networking")
 	void TransmitRequest(FHttpRequest& request);
-	void StartTransmission();
-	void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+
 
 	// Our event for when we request a new serverlist
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnServerListReceived, EHttpResponse, Response, const TArray<FServerInformation>&, ServerList);
@@ -267,29 +293,16 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Networking Library")
 		FOnServerCheckIn ServerCheckInEvent;
 
-
-	TArray<uint8> FStringToBinaryArray(FString InString);
-	FString BinaryArrayToFString(TArray<uint8> InBinaryArray);
-
-	FString DecompressBytes(TArray<uint8> BinaryArray);
-	TArray<uint8> CompressBytes(FString UncompressedString);
-
-
-	void ProcessJSON(FString JsonString);
-	void ProcessText(FString ContentString);
-
-	bool bTransmitSuccessful;
-	float CheckInFrequency;
-	void ProcessServerList(TSharedPtr<FJsonObject> JsonParsed);
-	void Closed(FString Message);
-
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPingComplete, EHttpResponse, Response, FServerInformation, ServerUpdated);
+	UPROPERTY(BlueprintAssignable, Category = "Networking Library")
+		FOnPingComplete ServerPingComplete;
 
 	UFUNCTION(BlueprintCallable, Category = "Networking")
 		void RequestServerList();
 
 	FServerInformation CurrentRegisteredServer;
 	FTimerHandle CheckIn_Handle;
-	UGameInstance* GameInstance;
+
 
 	UFUNCTION()
 		void CheckInServer();
@@ -302,6 +315,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Networking")
 		void UnregisterServer();
+
+	UFUNCTION(BlueprintCallable, Category = "Networking")
+		void UpdatePing(FServerInformation Server);
 
 	FString ServerToJSON(FServerInformation InServer, FHttpRequest InRequest);
 

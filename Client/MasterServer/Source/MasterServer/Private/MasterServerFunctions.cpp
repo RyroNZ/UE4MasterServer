@@ -34,7 +34,35 @@ void UMasterServerFunctions::Initalize(UGameInstance* NewParent, FString Ip, FSt
 	Http = &FHttpModule::Get();
 	TargetHost = FString::Printf(TEXT("http://%s:%s"), *Ip, *Port);
 	GameInstance = NewParent;
+
+
+	HTTPServer = httpd_create(8082, StaticHTTPHandler, this);
+
+	// Process 100 times a second, max of 10ms latency from this.
+	GameInstance->GetWorld()->GetTimerManager().SetTimer(HttpProcess_Handle, this, &UMasterServerFunctions::HttpProcess, 0.001, true);
 }
+
+void UMasterServerFunctions::Shutdown()
+{
+	if (HTTPServer)
+	{
+		httpd_destroy(HTTPServer);
+	}
+}
+
+void UMasterServerFunctions::HttpProcess()
+{
+	if (HTTPServer)
+	{
+		httpd_process(HTTPServer, false);
+	}
+}
+
+void UMasterServerFunctions::StaticHTTPHandler(HttpResponse* Response, void* UserData)
+{
+	httpresponse_response(Response, 200, "Request Received!", 0, "Content-Type: text\r\n");
+}
+
 
 void UMasterServerFunctions::TransmitRequest(FHttpRequest& request)
 {
@@ -44,6 +72,8 @@ void UMasterServerFunctions::TransmitRequest(FHttpRequest& request)
 		StartTransmission();
 	}
 }
+
+
 
 void UMasterServerFunctions::StartTransmission()
 {
@@ -56,15 +86,29 @@ void UMasterServerFunctions::StartTransmission()
 	CurrentRequest = RequestQueue[0];
 	RequestQueue.RemoveAt(0);
 
+
+
 	if (!Http) return;
 	if (!Http->IsHttpEnabled()) return;
 
 	TSharedRef < IHttpRequest > Request = Http->CreateRequest();
 	Request->SetVerb(CurrentRequest.RequestVerb);
 	Request->SetHeader("User-Agent", "UE4GameClient/1.0");
-	Request->SetHeader("Content-Type", "application/json");
-	Request->SetURL(TargetHost + CurrentRequest.TheDest);
-	Request->SetContent(CompressBytes(CurrentRequest.TheData));
+
+
+	if (CurrentRequest.RequestType == EHttpRequestType::HRT_PingServer)
+	{
+		start = std::clock();
+
+		//URL should be the server we are trying to ping
+		Request->SetURL("http://" + CurrentRequest.UpdateServer.Ip + ":" + FString::SanitizeFloat(8082));
+	}
+	else
+	{
+		Request->SetHeader("Content-Type", "application/json");
+		Request->SetURL(TargetHost + CurrentRequest.TheDest);
+		Request->SetContent(CompressBytes(CurrentRequest.TheData));
+	}
 
 	ServerList.Empty();
 
@@ -80,6 +124,14 @@ void UMasterServerFunctions::OnResponseReceived(FHttpRequestPtr Request, FHttpRe
 	if (!Response.IsValid()) { CurrentRequest.ResponseType = EHttpResponse::HR_NoData; Closed(MessageBody); return; }
 	if (EHttpResponseCodes::IsOk(Response->GetResponseCode()))
 	{
+
+		// If we want to ping the server only, get the time now, as we do not want it to include processing and broadcast time
+		if (CurrentRequest.RequestType == EHttpRequestType::HRT_PingServer)
+		{
+			CurrentRequest.ResponseType = EHttpResponse::HR_Success;
+			CurrentRequest.UpdateServer.Ping = std::clock() - start / (double)(CLOCKS_PER_SEC / 1000);
+		}
+
 		if (Response->GetContentType().Equals("application/json"))
 		{
 			MessageBody = DecompressBytes(Response->GetContent());
@@ -220,6 +272,9 @@ void UMasterServerFunctions::Closed(FString Message)
 		break;
 	case EHttpRequestType::HRT_UnregisterServer:
 		ServerUnregisteredEvent.Broadcast(CurrentRequest.ResponseType);
+		break;
+	case EHttpRequestType::HRT_PingServer:
+		ServerPingComplete.Broadcast(CurrentRequest.ResponseType, CurrentRequest.UpdateServer);
 
 	}
 
@@ -266,6 +321,14 @@ void UMasterServerFunctions::UnregisterServer()
 		ServerUnregisteredEvent.Broadcast(EHttpResponse::HR_NoSend);
 	}
 
+}
+
+void UMasterServerFunctions::UpdatePing(FServerInformation Server)
+{
+	FHttpRequest* RequestData = new FHttpRequest;
+	RequestData->SetRequestType(EHttpRequestType::HRT_PingServer);
+	RequestData->UpdateServer = Server;
+	TransmitRequest(*RequestData);
 }
 
 void UMasterServerFunctions::CheckInServer()
@@ -339,3 +402,4 @@ UObject* UMasterServerFunctions::NewObjectFromBlueprint(UObject* WorldContextObj
 
 	return tempObject;
 }
+
