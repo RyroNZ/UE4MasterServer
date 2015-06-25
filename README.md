@@ -155,6 +155,11 @@ Once you have the list of servers you may want to use a method of pinging them a
 
 ![request serverlist](http://ryanpost.me/wp-content/uploads/2015/06/serverlist_request_blueprint.png)
 
+####Updating Ping for Server
+
+Very simple, and likely somethign you would do straight after requesting the serverlist, and before adding it to the browser. Once the ping is received you could add it to the serverlist. please see the example of how you may want to implement this below.
+
+![ping server](http://ryanpost.me/wp-content/uploads/2015/06/ping_blueprint.png)
 ###C++
 
 ####Setup Plugin
@@ -223,6 +228,33 @@ This should ideally be in your GameInstance class.
 	MasterServer->ServerListReceivedEvent.AddDynamic(this, &MyGameInstance::OnServerListReceived);
 	//Request the serverlist
 	MasterServer->RequestServerList();
+	
+
+```
+
+####Pinging a server
+```cpp
+    //Bind to the delegate
+	MasterServer->ServerListReceivedEvent.AddDynamic(this, &MyGameInstance::OnServerListReceived);
+	//Request the serverlist
+	MasterServer->RequestServerList();
+	
+	void MyGameInstance::OnServerListReceived(FHttpResponse Response, const TArray<FServerInformation>& Serverlist)
+	{
+	    //Just received the serverlist
+	    for (int32 i = 0; i < ServerList.Num(); i++)
+	    {
+	        MasterServer->ServerPingComplete.AddDynamic(this, &MyGameInstance::OnPingUpdated)
+	        MasterServer->UpdatePing(ServerList[i]);
+	    }
+	}
+	
+	void MyGameInstance::OnPingUpdated(FHttpResponse Response, FServerInformation ServerUpdated)
+	{
+	    //Ping has been updated.. add it to the serverlist, if we cannot ping the server there is some issue and it likely won't actually be running anyway
+	}
+	
+	
 ```
 
 <br>
