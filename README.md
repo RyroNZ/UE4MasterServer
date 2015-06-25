@@ -3,13 +3,6 @@
 ##### Version
 15.06.1
 
-<<<<<<< HEAD
-This is a plugin for Unreal Engine 4 that adds server registration, deregistration etc with a master server. 
-
-Once the plugin has been installed you will be able to use this to receive server lists of all active servers with their IP, Port, Name, Game Mode, Map, Current Players, Max Players, and anything else you wish to add as it is free to use and modify in your projects. :).
-
-This is quite basic at this stage, but for some peoples purposes it will prove a useful foundation. I will be updating this in the coming weeks to include more features such as pinging servers received on the serverlist, and some functions to get the public IP from the adapter.
-=======
 This is a plugin for Unreal Engine 4 that adds super simple server registration, deregistration, etc with a master server. 
 
 This is not mean't as a complete Online Subsystem, just as a way for people with a need of getting an up to date serverlist they can serve up to clients and adapt it to their own needs (I am open to suggestions of functionality you want included by default!).
@@ -18,7 +11,6 @@ Once the plugin has been installed you will be able to use this to receive serve
 
 This is quite basic at this stage, but I will be updating this in the coming weeks to include more features such as pinging servers received on the serverlist, and some functions to get the public IP from the adapter, and possibly expanding it to Unity.
 
->>>>>>> 630ee68aecc981312204a15650e8ec4d47d10f1b
 
 If you have any queries, feedback or concerns please email me at ryan@ryanpost.me.
 
@@ -30,19 +22,11 @@ If you have any queries, feedback or concerns please email me at ryan@ryanpost.m
 
 There are a couple of different ways to integrate this plugin into your project. But for our purposes we will go for project integration.
 
-<<<<<<< HEAD
-Due to some limitations with STRUCTS and blueprint, the functions in the struct are not available. I have included a blueprint helper class under Client/Blueprint/BP_MasterServerHelper.UASSET that recreates these functions.
-
-###Code Based Project
-
-This method enables the plugin in a single code-based project. This can be done on any project that was create as a code project (Unfortunately blueprint only projects are **not** supported at this stage. Please note, even with this limitation the plugin can be used purely in blueprint and does not require any C++ knowledge)
-=======
 
 
 ###Code Based Project
 
 This method enables the plugin in a single code-based project. This can be done on any project that was created as a code project (Unfortunately blueprint only projects are **not** supported at this stage. Please note, even with this limitation the plugin can be used purely in blueprint and does not require any C++ knowledge)
->>>>>>> 630ee68aecc981312204a15650e8ec4d47d10f1b
 
 1. Clone this repo to a subfolder in your project called /Plugins/MasterServer.
 2. Open your project, you will be prompted to rebuild the modules. (YourProjectName-MasterServer.dll)
@@ -66,13 +50,9 @@ Ensure the plugin is enabled (by default, this should already be the case)
 Installing, and running the server will be different depending on your operating sytem, but we will handle this for Windows and Linux.
 
 ##Windows Setup
-<<<<<<< HEAD
-This setup is fairly straight forward if the requirements are met.
-=======
 
 This setup is fairly straight forward if the requirements are met.
 
->>>>>>> 630ee68aecc981312204a15650e8ec4d47d10f1b
 1. Clone the repository, or download the zip and extract it some place safe.
 2. Open UE4MasterServer/Server/ (or UE4MasterServer-master/Server/ if you extracted the zip)
 3. Run the Windows Setup shortcut
@@ -85,10 +65,7 @@ This setup is fairly straight forward if the requirements are met.
 ##Linux Setup
 
 If you meet the requirements, the below is sufficient to install and run the server.
-<<<<<<< HEAD
-=======
 
->>>>>>> 630ee68aecc981312204a15650e8ec4d47d10f1b
 ```sh
 $ git clone https://github.com/RyroNZ/UE4MasterServer.git
 $ cd UE4MasterServer/Server/
@@ -114,17 +91,6 @@ If all goes well, you should see 'Started HTTP server on port xxxx'
 Some configuration options are provided as globals in the MasterServer.py, these are as follows;
 
 >PORT
-<<<<<<< HEAD
-<br> This defines which port the HTTP server will use, whatever this is set to needs to tbe the same as the plugin.
-<br>Default=8081
-
->TICK_FREQUENCY
-<br>This defines how frequently the server will process the queues and update the serverlist in seconds. Having a higher value will reduce load, at the cost of the clients potentially having a outdated serverlist.
-<br>Default=1
-
->CHECK_IN_FREQUENCY
-<br>This defines how frequently the server is required to check in, to confirm it is still active and to update it's registration in seconds. (ie. player count changes, or map changes). This is a server side value, so any clients using the plugin will reflect this change.
-=======
 <br> This defines which port the HTTP server will use, whatever this is set to needs to the the same as the plugin.
 <br>Default=8081
 
@@ -134,7 +100,6 @@ Some configuration options are provided as globals in the MasterServer.py, these
 
 >CHECK_IN_FREQUENCY
 <br>This defines how frequently the server is required to check in to confirm it is still active and to update it's registration in seconds. (ie. player count changes, or map changes). This is a server side value, so any clients using the plugin will reflect this change.
->>>>>>> 630ee68aecc981312204a15650e8ec4d47d10f1b
 <br>Default=30
 
 >MISSED_CHECKINS_BEFORE_INACTIVE
@@ -146,12 +111,6 @@ Some configuration options are provided as globals in the MasterServer.py, these
 
 ##Client
 
-<<<<<<< HEAD
-We will go through the process to initalize the plugin register, and deregister a server, and what you should expect to happen on the client (and the server) when we do this.
-
-###Blueprint
-This plugin is able to be completely used in blueprint, so we will demonstrate how to do this.
-=======
 We will go through the process to initalize the plugin, register, and deregister a server, and how to handle the various events this plugin provides.
 
 ###Blueprint
@@ -159,7 +118,6 @@ This plugin is able to be completely used in blueprint, so we will demonstrate h
 
 Due to some limitations with STRUCTS and blueprint, the functions in the struct are not available. I have included a blueprint helper class under Client/Blueprint/BP_MasterServerHelper.UASSET that recreates these functions.
 
->>>>>>> 630ee68aecc981312204a15650e8ec4d47d10f1b
 ####Intialize the plugin
 This is what we will need to do before we start anything, it is recommended to do this in the Game Instance class so that it does not get cleaned up during game play (ie. change map and have the client stop ticking).
 
