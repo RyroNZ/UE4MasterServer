@@ -191,7 +191,6 @@ struct FServerInformation
 		TSharedPtr<FJsonObject> OutJsonArray = MakeShareable(new FJsonObject());
 
 		OutJsonArray->SetStringField("name", Name);
-		OutJsonArray->SetStringField("ip", Ip);
 		OutJsonArray->SetStringField("port", Port);
 		OutJsonArray->SetStringField("game_mode", GameMode);
 		OutJsonArray->SetStringField("map", Map);
@@ -203,9 +202,8 @@ struct FServerInformation
 
 	bool IsEmpty()
 	{
-		if (Name.IsEmpty() || Ip.IsEmpty() || Port.IsEmpty())
+		if (Name.IsEmpty() || Port.IsEmpty())
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, "Server is empty");
 			return true;
 		}
 		else
@@ -306,8 +304,6 @@ public:
 		void UnregisterServer();
 
 	FString ServerToJSON(FServerInformation InServer, FHttpRequest InRequest);
-
-
 
 	// Included so blueprint people can create class
 	UFUNCTION(BlueprintPure, meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", FriendlyName = "Create Object From Blueprint", CompactNodeTitle = "Create", Keywords = "new create blueprint"), Category = Game)

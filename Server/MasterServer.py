@@ -141,8 +141,8 @@ class MyServer(http.server.BaseHTTPRequestHandler):
     # Client has requested the server list, send this.
     def handle_send_serverlist(self):
         main_thread.queue_log(type="Information",
-                                   message="Sending serverlist to " + self.get_formatted_ip(),
-                                   client=self.client_address)
+                              message="Sending serverlist to " + self.get_formatted_ip(),
+                              client=self.client_address)
         self.wfile.write(main_thread.latest_serverlist)
 
     def do_PUT(self):
@@ -158,6 +158,8 @@ class MyServer(http.server.BaseHTTPRequestHandler):
         json_data = json.loads(decompressed_data)
 
         was_successful = True
+
+        # Set the IP address to that of the requester.
         # We should queue the request to the main thread so that our response is always quick.
         # If the server is slow due to load this should not effect the latency of the responses.
         if SERVER_REGISTRATION in json_data:
@@ -220,7 +222,7 @@ class MainThread():
             if not self.waiting_to_stop:
                 threading.Timer(TICK_FREQUENCY, self.tick_forever).start()
 
-                #Process queues
+                # Process queues
                 self.server_registration()
                 self.server_checkin()
                 self.server_deregistration()
@@ -270,7 +272,7 @@ class MainThread():
                                   map=server[SERVER_MAP],
                                   max_players=server[SERVER_MAXPLAYERS],
                                   current_players=server[SERVER_CURRENTPLAYERS]
-                                  ).where(Server.id == Server.generate_id(server[SERVER_IP], server[SERVER_PORT]))\
+                                  ).where(Server.id == Server.generate_id(server[SERVER_IP], server[SERVER_PORT])) \
                         .execute()
 
                 self.queue_log(type="Information",
@@ -320,7 +322,7 @@ class MainThread():
                     Server.id == Server.generate_id(server[SERVER_IP], server[SERVER_PORT])).execute()
                 self.queue_log(type="Information",
                                message=server[SERVER_NAME] + " on " + server[SERVER_IP] + ":" +
-                                       server['port'] + " checked in", client=server[SERVER_CLIENTADDR])
+                                       server[SERVER_PORT] + " checked in", client=server[SERVER_CLIENTADDR])
                 self.server_checkin_queue.remove(server)
 
         if (servers_checked_in > 0):
@@ -331,7 +333,8 @@ class MainThread():
     def set_expired_servers_inactive(self):
         now = datetime.now(timezone.utc).timestamp()
         expired_servers = Server.update(is_active=False).where(
-            (Server.registration_time + CHECK_IN_FREQUENCY * MISSED_CHECKINS_BEFORE_INACTIVE < now) & (Server.is_active == True)).execute()
+            (Server.registration_time + CHECK_IN_FREQUENCY * MISSED_CHECKINS_BEFORE_INACTIVE < now) & (
+                Server.is_active == True)).execute()
         if expired_servers > 0:
             self.queue_log(type="Information", message="Purged " + str(expired_servers) + " expired servers.")
             self.regenerate_serverlist = True
@@ -347,15 +350,18 @@ class MainThread():
 
     # Functions for appending data to various queues that are processed each tick.
     def queue_server_registration(self, server, client_address):
-        server['client_address'] = client_address
+        server[SERVER_CLIENTADDR] = client_address
+        server[SERVER_IP] = client_address[0]
         self.server_registration_queue.append(server)
 
     def queue_server_checkin(self, server, client_address):
-        server['client_address'] = client_address
+        server[SERVER_CLIENTADDR] = client_address
+        server[SERVER_IP] = client_address[0]
         self.server_checkin_queue.append(server)
 
     def queue_server_unregister(self, server, client_address):
-        server['client_address'] = client_address
+        server[SERVER_CLIENTADDR] = client_address
+        server[SERVER_IP] = client_address[0]
         self.server_deregistration_queue.append(server)
 
     def queue_log(self, type, message, client=None):
@@ -376,4 +382,5 @@ try:
 except KeyboardInterrupt:
     print('^C received. Shutting down the HTTP server.')
     httpd.server_close()
-    main_thread.stop_ticking()
+    main_thread.stop_ticki
+g()
