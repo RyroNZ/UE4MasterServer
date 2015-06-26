@@ -1,7 +1,7 @@
 # Master Server with Unreal Engine 4 Plugin
 
 ##### Version
-15.06.1
+25.06.02
 
 This is a plugin for Unreal Engine 4 that adds super simple server registration, deregistration, etc with a master server. 
 
