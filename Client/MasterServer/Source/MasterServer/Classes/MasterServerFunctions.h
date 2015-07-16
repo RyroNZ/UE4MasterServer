@@ -248,6 +248,7 @@ private:
 	Httpd* HTTPServer;
 
 	std::clock_t	start;
+	float PingElapsedTime;
 
 	void HttpProcess();
 

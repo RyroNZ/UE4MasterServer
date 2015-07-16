@@ -2,7 +2,7 @@
     "FileVersion" : 3,
     "FriendlyName" : "RyroNZs Master Server Client",
     "Version" : 1,
-    "VersionName": "16.7.01",
+    "VersionName": "16.7.02",
     "EngineVersion" : 4.8.2,
     "Description" : "Networking library designed to interface with RyroNZs Python Master Server.",
     "Category" : "Networking",

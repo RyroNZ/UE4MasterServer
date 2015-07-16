@@ -109,12 +109,14 @@ void UMasterServerFunctions::StartTransmission()
 
 		//URL should be the server we are trying to ping
 		Request->SetURL("http://" + CurrentRequest.UpdateServer.Ip + ":" + FString::SanitizeFloat(8082));
+		Http->SetHttpTimeout(1);
 	}
 	else
 	{
 		Request->SetHeader("Content-Type", "application/json");
 		Request->SetURL(TargetHost + CurrentRequest.TheDest);
 		Request->SetContent(CompressBytes(CurrentRequest.TheData));
+		Http->SetHttpTimeout(10);
 	}
 
 	ServerList.Empty();
@@ -136,10 +138,12 @@ void UMasterServerFunctions::OnResponseReceived(FHttpRequestPtr Request, FHttpRe
 		if (CurrentRequest.RequestType == EHttpRequestType::HRT_PingServer)
 		{
 			CurrentRequest.ResponseType = EHttpResponse::HR_Success;
-			CurrentRequest.UpdateServer.Ping = std::clock() - start / (double)(CLOCKS_PER_SEC / 1000);
+			// We divide by two as we only want to measure ping one way.
+			CurrentRequest.UpdateServer.Ping = (std::clock() - start / (double)(CLOCKS_PER_SEC / 1000)) / 2;
+			
 		}
 
-		if (Response->GetContentType().Equals("application/json"))
+	    if (Response->GetContentType().Equals("application/json"))
 		{
 			MessageBody = DecompressBytes(Response->GetContent());
 			ProcessJSON(MessageBody);
@@ -148,7 +152,6 @@ void UMasterServerFunctions::OnResponseReceived(FHttpRequestPtr Request, FHttpRe
 	else
 	{
 		MessageBody = FString::Printf(TEXT("{\"success\":\"HTTP Error: %d\"}"), Response->GetResponseCode());
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::MakeRandomColor(), FString::SanitizeFloat(Response->GetResponseCode()));
 	}
 
 	Closed(MessageBody);
