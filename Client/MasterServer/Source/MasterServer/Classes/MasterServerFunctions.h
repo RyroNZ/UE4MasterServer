@@ -235,6 +235,10 @@ private:
 	FString TargetHost;
 	bool bIsBusy;
 
+	/** Delegate for callbacks to Tick */
+	FTickerDelegate TickDelegate;
+	bool Tick(float DeltaSeconds);
+
 	TArray<FHttpRequest> RequestQueue;
 	FHttpRequest CurrentRequest;
 
@@ -322,6 +326,6 @@ public:
 	FString ServerToJSON(FServerInformation InServer, FHttpRequest InRequest);
 
 	// Included so blueprint people can create class
-	UFUNCTION(BlueprintPure, meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", FriendlyName = "Create Object From Blueprint", CompactNodeTitle = "Create", Keywords = "new create blueprint"), Category = Game)
+	UFUNCTION(BlueprintPure, meta = (HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject", DisplayName = "Create Object From Blueprint", CompactNodeTitle = "Create", Keywords = "new create blueprint"), Category = Game)
 		static UObject* NewObjectFromBlueprint(UObject* WorldContextObject, TSubclassOf<UObject> UC);
 };

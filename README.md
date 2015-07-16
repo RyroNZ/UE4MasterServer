@@ -1,8 +1,14 @@
 # Master Server with Unreal Engine 4 Plugin
 
 ##### Version
-25.06.02
+16.7.01
 
+##### Changelog
+
+######16.7.01
+* Modified HttpProcess so it is now being called on Tick, instead of by a Timer. Improves latency accuracy and consistency.
+
+<br>
 This is a plugin for Unreal Engine 4 that adds super simple server registration, deregistration, etc with a master server. 
 
 This is not mean't as a complete Online Subsystem, just as a way for people with a need of getting an up to date serverlist they can serve up to clients and adapt it to their own needs (I am open to suggestions of functionality you want included by default!).

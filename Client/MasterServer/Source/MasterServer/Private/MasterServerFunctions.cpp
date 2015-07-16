@@ -35,11 +35,18 @@ void UMasterServerFunctions::Initalize(UGameInstance* NewParent, FString Ip, FSt
 	TargetHost = FString::Printf(TEXT("http://%s:%s"), *Ip, *Port);
 	GameInstance = NewParent;
 
-
 	HTTPServer = httpd_create(8082, StaticHTTPHandler, this);
 
-	// Process 100 times a second, max of 10ms latency from this.
-	GameInstance->GetWorld()->GetTimerManager().SetTimer(HttpProcess_Handle, this, &UMasterServerFunctions::HttpProcess, 0.001, true);
+	// Register delegate for ticker callback
+	TickDelegate = FTickerDelegate::CreateUObject(this, &UMasterServerFunctions::Tick);
+	FTicker::GetCoreTicker().AddTicker(TickDelegate);
+}
+
+bool UMasterServerFunctions::Tick(float DeltaSeconds)
+{
+	HttpProcess();
+
+	return true;
 }
 
 void UMasterServerFunctions::Shutdown()
@@ -141,6 +148,7 @@ void UMasterServerFunctions::OnResponseReceived(FHttpRequestPtr Request, FHttpRe
 	else
 	{
 		MessageBody = FString::Printf(TEXT("{\"success\":\"HTTP Error: %d\"}"), Response->GetResponseCode());
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::MakeRandomColor(), FString::SanitizeFloat(Response->GetResponseCode()));
 	}
 
 	Closed(MessageBody);
