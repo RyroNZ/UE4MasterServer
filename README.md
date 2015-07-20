@@ -1,16 +1,18 @@
 # Master Server with Unreal Engine 4 Plugin
 
 ##### Version
-16.7.02
+20.07.02
 
 ##### Changelog
+######16.07.02
+* Fixed uplugin engine version.
 
-######16.7.02
+######16.07.02
 * Divided time by two to get one way trip time as opposed to round trip, and further improved accuracy (is now very good on accuracy, with 6-15ms added for processing the request)
 * Modified time-out for ping request to 1 seconds, and 10 seconds for a standard request.
 * Removed some debug code that was left in 16.7.01
 
-######16.7.01
+######16.07.01
 * Modified HttpProcess so it is now being called on Tick, instead of by a Timer. Improves latency accuracy and consistency.
 
 <br>
