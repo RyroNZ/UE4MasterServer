@@ -261,7 +261,10 @@ void UMasterServerFunctions::ProcessServerList(TSharedPtr<FJsonObject> JsonParse
 		FServerInformation Server;
 
 		Server.GetDataFromJSON(JsonArray);
-		ServerList.Add(Server);
+		if (Server.GameId == GameId)
+		{
+			ServerList.Add(Server);
+		}
 	}
 
 }
@@ -300,10 +303,11 @@ void UMasterServerFunctions::Closed(FString Message)
 }
 
 
-void UMasterServerFunctions::RequestServerList()
+void UMasterServerFunctions::RequestServerList(int32 gameId /* DEFAULT =0 */)
 {
 	FHttpRequest* RequestData = new FHttpRequest;
 	RequestData->SetRequestType(EHttpRequestType::HRT_ReceiveServerList);
+	GameId = gameId
 	TransmitRequest(*RequestData);
 }
 

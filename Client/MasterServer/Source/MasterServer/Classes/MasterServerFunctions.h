@@ -91,6 +91,7 @@ struct FServerInformation
 
 	void GetDataFromJSON(TSharedPtr<FJsonObject> JsonArray)
 	{
+		GameId = JsonArray->GetNumberField("game_id");
 		Name = JsonArray->GetStringField("name");
 		Ip = JsonArray->GetStringField("ip");
 		Port = JsonArray->GetStringField("port");
@@ -238,6 +239,9 @@ private:
 	FHttpModule* Http;
 	FString TargetHost;
 	bool bIsBusy;
+	
+	# GameID to filter servers received with
+	int32 GameId;
 
 	/** Delegate for callbacks to Tick */
 	FTickerDelegate TickDelegate;
@@ -307,7 +311,7 @@ public:
 		FOnPingComplete ServerPingComplete;
 
 	UFUNCTION(BlueprintCallable, Category = "Networking")
-		void RequestServerList();
+		void RequestServerList(int32 gameId = 0);
 
 	FServerInformation CurrentRegisteredServer;
 	FTimerHandle CheckIn_Handle;
