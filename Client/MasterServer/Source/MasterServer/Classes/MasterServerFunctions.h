@@ -55,7 +55,10 @@ USTRUCT(BlueprintType)
 struct FServerInformation
 {
 	GENERATED_USTRUCT_BODY()
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
+		int32 GameId;
+		
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Server Information")
 		FString Name;
 
@@ -107,6 +110,7 @@ struct FServerInformation
 		OutJsonArray->SetStringField("map", Map);
 		OutJsonArray->SetNumberField("max_players", MaxPlayers);
 		OutJsonArray->SetNumberField("current_players", CurrentPlayers);
+		OutJsonArray->SetNumberField("game_id", GameId)
 
 		return OutJsonArray;
 	}
@@ -125,7 +129,7 @@ struct FServerInformation
 
 	FServerInformation()
 	{
-		Name = ""; Ip = ""; Port = ""; GameMode = ""; Map = ""; MaxPlayers = -1; CurrentPlayers = -1; Ping = -1;
+		GameId = 0; Name = ""; Ip = ""; Port = ""; GameMode = ""; Map = ""; MaxPlayers = -1; CurrentPlayers = -1; Ping = -1;
 	}
 };
 

@@ -53,6 +53,7 @@ SERVER_CHECKIN = "ServerCheckIn"
 SERVER_DEREGISTRATION = "ServerDeregistration"
 
 # Incoming JSON server dictionary fields
+SERVER_GAMEID = "game_id"
 SERVER_ID = "id"
 SERVER_REGISTRATION_TIME = "registration_time"
 SERVER_NAME = 'name'
@@ -67,6 +68,7 @@ SERVER_CLIENTADDR = "client_address"
 
 
 class Server(Model):
+    game_id = BigIntegerField(default=0)
     id = BigIntegerField(unique=True)
     registration_time = DoubleField(default=datetime.now(timezone.utc).timestamp())
     name = CharField()
@@ -265,7 +267,8 @@ class MainThread():
                     Server.create(**server)
                 except peewee.IntegrityError:
                     # Server already registered, set is_active to true and update any other information
-                    Server.update(id=server[SERVER_ID],
+                    Server.update(game_id=server[SERVER_GAMEID],
+                                  id=server[SERVER_ID],
                                   name=server[SERVER_NAME],
                                   is_active=server[SERVER_ISACTIVE],
                                   registration_time=server[SERVER_REGISTRATION_TIME],
