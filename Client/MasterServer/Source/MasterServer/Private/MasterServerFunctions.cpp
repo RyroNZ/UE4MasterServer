@@ -307,7 +307,7 @@ void UMasterServerFunctions::RequestServerList(int32 gameId /* DEFAULT =0 */)
 {
 	FHttpRequest* RequestData = new FHttpRequest;
 	RequestData->SetRequestType(EHttpRequestType::HRT_ReceiveServerList);
-	GameId = gameId
+	GameId = gameId;
 	TransmitRequest(*RequestData);
 }
 

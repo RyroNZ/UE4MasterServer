@@ -111,7 +111,7 @@ struct FServerInformation
 		OutJsonArray->SetStringField("map", Map);
 		OutJsonArray->SetNumberField("max_players", MaxPlayers);
 		OutJsonArray->SetNumberField("current_players", CurrentPlayers);
-		OutJsonArray->SetNumberField("game_id", GameId)
+		OutJsonArray->SetNumberField("game_id", GameId);
 
 		return OutJsonArray;
 	}
@@ -240,7 +240,7 @@ private:
 	FString TargetHost;
 	bool bIsBusy;
 	
-	# GameID to filter servers received with
+	/** GameID to filter servers received with */
 	int32 GameId;
 
 	/** Delegate for callbacks to Tick */
