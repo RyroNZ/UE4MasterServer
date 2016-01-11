@@ -21,6 +21,15 @@ along with this program.If not, see < http://www.gnu.org/licenses/>.
 */
 
 
+
+
+#pragma once
+#include "Http.h"
+#include "httpd.h"
+#include <ctime>
+
+#include "MasterServerFunctions.generated.h"
+
 UENUM(BlueprintType)
 enum class EHttpRequestType : uint8
 {
@@ -42,14 +51,6 @@ enum class EHttpResponse : uint8
 	HR_NoSend			UMETA(DisplayName = "Failed to send request!")
 
 };
-
-#pragma once
-#include "Http.h"
-#include "httpd.h"
-#include <ctime>
-
-// Bug requires .generated to be included after enums for delegates using enum types.
-#include "MasterServerFunctions.generated.h"
 
 USTRUCT(BlueprintType)
 struct FServerInformation
