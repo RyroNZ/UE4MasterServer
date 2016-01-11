@@ -43,7 +43,7 @@ enum class EHttpResponse : uint8
 
 };
 
-
+#pragma once
 #include "Http.h"
 #include "httpd.h"
 #include <ctime>
