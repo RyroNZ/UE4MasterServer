@@ -262,7 +262,7 @@ class MainThread():
                 server[SERVER_ISACTIVE] = True
                 try:
                     Server.create(**server)
-                except peewee.IntegrityError:
+                except:
                     # Server already registered, set is_active to true and update any other information
                     Server.update(game_id=server[SERVER_GAMEID],
                                   name=server[SERVER_NAME],
@@ -382,5 +382,4 @@ try:
 except KeyboardInterrupt:
     print('^C received. Shutting down the HTTP server.')
     httpd.server_close()
-    main_thread.stop_ticki
-g()
+    main_thread.stop_ticking()
