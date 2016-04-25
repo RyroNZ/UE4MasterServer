@@ -265,7 +265,6 @@ class MainThread():
                 except peewee.IntegrityError:
                     # Server already registered, set is_active to true and update any other information
                     Server.update(game_id=server[SERVER_GAMEID],
-                                  id=server[SERVER_ID],
                                   name=server[SERVER_NAME],
                                   is_active=server[SERVER_ISACTIVE],
                                   registration_time=server[SERVER_REGISTRATION_TIME],
