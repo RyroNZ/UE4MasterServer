@@ -195,7 +195,7 @@ Include the header in your project
     #include "MasterServerFunctions.h"
 
 
-####Initalize the plugin
+#### Initalize the plugin
 
 This should ideally be in your GameInstance class.
 ```cpp
