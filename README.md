@@ -25,9 +25,7 @@ Once the plugin has been installed you will be able to use this to receive serve
 
 If you have any queries, feedback or concerns please email me at ryan@ryanpost.me.
 
-## Setup
----
-<br>
+
 ## Plugin Integration
 
 
