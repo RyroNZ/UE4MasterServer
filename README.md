@@ -22,8 +22,6 @@ This is not mean't as a complete Online Subsystem, just as a way for people with
 
 Once the plugin has been installed you will be able to use this to receive server lists of all active servers with their IP, Port, Name, Game Mode, Map, Current Players, Max Players, and anything else you wish to add as it is free to use and modify in your projects. :).
 
-This is quite basic at this stage, but I will be updating this in the coming weeks to include more features such as pinging servers received on the serverlist, and some functions to get the public IP from the adapter, and possibly expanding it to Unity.
-
 
 If you have any queries, feedback or concerns please email me at ryan@ryanpost.me.
 
