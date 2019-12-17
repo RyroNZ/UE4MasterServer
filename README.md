@@ -1,7 +1,7 @@
 # Online Subsystem Python
 Created by RyroNZ
 
-Online Subsystem Python is a self-hosted online subsystem for Creating, Finding and Joining Sessions using the standard session nodes. 
+Online Subsystem Python is a self-hosted online subsystem for Creating, Finding and Joining Sessions over the internet using the standard session nodes. 
 It is based off the Null subsystem.
 
 ![](https://puu.sh/El2ZS/e3abeb7e11.png)
