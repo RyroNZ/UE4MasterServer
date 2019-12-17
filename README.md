@@ -69,7 +69,7 @@ cherrypy.config.update({ 'server.socket_port': 8081,
                         })
 ```
 
-## Configuring Server and Client
+## Configuring Client
 
 
 Open OnlineSubsystemPythonConfig.cpp in the Source/Private directory
