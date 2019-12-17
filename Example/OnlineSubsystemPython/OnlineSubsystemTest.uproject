@@ -1,0 +1,22 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "4.22",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "OnlineSubsystemTest",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"FunctionalTesting"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "OnlineSubsystemPython",
+			"Enabled": true
+		}
+	]
+}

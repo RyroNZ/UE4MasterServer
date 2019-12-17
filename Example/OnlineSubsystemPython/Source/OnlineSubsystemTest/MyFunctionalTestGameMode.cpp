@@ -1,0 +1,38 @@
+/* 
+Copyright (c) 2019 Ryan Post
+
+This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+
+2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+
+3. This notice may not be removed or altered from any source distribution.
+*/
+
+
+#include "MyFunctionalTestGameMode.h"
+#include "OnlineEngineInterface.h"
+#include "UObject/CoreOnline.h"
+#include "Engine.h"
+#include "UnrealNetwork.h"
+#include "Online.h"
+
+
+void AMyFunctionalTestGameMode::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
+{
+	// Login unique id must match server expected unique id type OR No unique id could mean game doesn't use them
+	const bool bUniqueIdCheckOk = (!UniqueId.IsValid() || (UniqueId.GetType() == UOnlineEngineInterface::Get()->GetDefaultOnlineSubsystemName()));
+	if (bUniqueIdCheckOk)
+	{
+		ErrorMessage = GameSession->ApproveLogin(Options);
+	}
+	else
+	{
+		ErrorMessage = TEXT("incompatible_unique_net_id");
+	}
+
+	FGameModeEvents::GameModePreLoginEvent.Broadcast(this, UniqueId, ErrorMessage);
+}

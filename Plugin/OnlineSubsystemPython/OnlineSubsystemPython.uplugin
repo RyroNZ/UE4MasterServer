@@ -1,0 +1,31 @@
+{
+	"FileVersion" : 3,
+	
+	"FriendlyName" : "Online Subsystem Python",
+	"Version" : 1,
+	"VersionName" : "1.0",
+	"Description" : "Access to custom Python Master Server platform",
+	"Category" : "Online Platform",
+	"CreatedBy" : "VOID Interactive (Ryan Post)",
+	"CreatedByURL" : "http://voidinteractive.net",
+	"EnabledByDefault" : true,
+
+    "Modules": [
+        {
+            "Name": "OnlineSubsystemPython",
+            "Type": "Runtime",
+            "LoadingPhase" : "None"
+        }
+    ],
+	"Plugins": [
+		{
+			"Name": "OnlineSubsystem",
+			"Enabled": true
+		},
+		{
+			"Name": "OnlineSubsystemUtils",
+			"Enabled": true
+		}
+	]
+
+}
