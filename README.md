@@ -91,6 +91,6 @@ PASSWORDPROTECTED
 PLAYERCOUNT
 ```
 
-Everything should be working now and you should be able to host and joining using the standard session nodes!
+Everything should be working now and you should be able to host and join using the standard session nodes!
 
 If there are things not working, please email me at ryan@somethinglogical.co.nz
