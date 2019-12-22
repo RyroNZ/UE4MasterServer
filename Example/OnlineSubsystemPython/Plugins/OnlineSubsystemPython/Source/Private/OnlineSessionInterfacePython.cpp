@@ -319,9 +319,10 @@ void FOnlineSessionPython::CreateSession_ResponseReceived(FHttpRequestPtr Reques
 			{
 				Session->SessionState = EOnlineSessionState::Pending;
 			}
-			UE_LOG_ONLINE_SESSION(Warning, TEXT("Created Python Session!"));
+			float HeartbeatDelta = JsonObject->GetNumberField("heartbeat") - 1.0f;
+			UE_LOG_ONLINE_SESSION(Warning, TEXT("Created Python Session! Heartbeat Delta: %f"), HeartbeatDelta);
 			TriggerOnCreateSessionCompleteDelegates(CreateSessionName, true);
-			StartHeartbeat();
+			StartHeartbeat(FMath::Clamp(HeartbeatDelta, 0.01f, 10000.0f));
 		}
 		else
 		{
@@ -513,7 +514,6 @@ void FOnlineSessionPython::UpdateSession_ResponseReceived(FHttpRequestPtr Reques
 		{
 			TriggerOnUpdateSessionCompleteDelegates(CreateSessionName, true);
 			UE_LOG_ONLINE_SESSION(Warning, TEXT("Updated Python Session!"));
-			StartHeartbeat();
 		}
 		else
 		{
@@ -1485,7 +1485,7 @@ void FOnlineSessionPython::DumpSessionState()
 	}
 }
 
-void FOnlineSessionPython::StartHeartbeat()
+void FOnlineSessionPython::StartHeartbeat(float DeltaBetweenHeartbeats)
 {
 #if WITH_ENGINE
 	if (GEngine)
@@ -1493,7 +1493,7 @@ void FOnlineSessionPython::StartHeartbeat()
 		const FOnlineSubsystemPython& Subsystem = *PythonSubsystem;
 		UWorld* World = GetWorldForOnline(Subsystem.GetInstanceName());
 
-		World->GetTimerManager().SetTimer(PerformHeartbeat_Handle, FTimerDelegate::CreateRaw(this, &FOnlineSessionPython::PerformHeartbeat), 50.0f, true, 1.0f);
+		World->GetTimerManager().SetTimer(PerformHeartbeat_Handle, FTimerDelegate::CreateRaw(this, &FOnlineSessionPython::PerformHeartbeat), DeltaBetweenHeartbeats, true, 1.0f);
 	}
 #endif
 }

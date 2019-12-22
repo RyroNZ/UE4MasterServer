@@ -39,6 +39,8 @@ class Server(object):
 class MasterServer(object):
 
     def __init__(self):
+        # Time between heartbeat in seconds, this is passed to the client and kept in sync.
+        self.time_between_heartbeats = 2
         self.serverlist = []
         thread = Thread(target = self.heartbeat)
         thread.start()
@@ -48,7 +50,7 @@ class MasterServer(object):
         while True:
             for server in self.serverlist:
                 delta = int(time.time()) - server.timeoflastheartbeat
-                if (delta > 60):
+                if (delta > self.time_between_heartbeats):
                     self.serverlist.remove(server)
             sleep(1)
             
@@ -77,7 +79,7 @@ class MasterServer(object):
                 pass
 
             self.serverlist.append(server)
-            return json.dumps({'error' : False, 'message' : 'Sucessfully added your server [%s %s:%s] to the server browser.' % (name, cherrypy.request.remote.ip, port)})
+            return json.dumps({'error' : False, 'message' : 'Sucessfully added your server [%s %s:%s] to the server browser.' % (name, cherrypy.request.remote.ip, port), 'heartbeat' : self.time_between_heartbeats })
 
 
     def internal_update_server(self, ip, port, name, map, playercount, maxplayers, pwprotected, gamemode):

@@ -340,7 +340,7 @@ public:
 	virtual int32 GetNumSessions() override;
 	virtual void DumpSessionState() override;
 
-	void StartHeartbeat();
+	void StartHeartbeat(float DeltaBetweenHeartbeats);
 	FTimerHandle PerformHeartbeat_Handle;
 	void PerformHeartbeat();
 };
