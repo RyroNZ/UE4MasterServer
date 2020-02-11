@@ -40,7 +40,7 @@ class MasterServer(object):
 
     def __init__(self):
         # Time between heartbeat in seconds, this is passed to the client and kept in sync.
-        self.time_between_heartbeats = 2
+        self.time_between_heartbeats = 30
         self.serverlist = []
         thread = Thread(target = self.heartbeat)
         thread.start()
