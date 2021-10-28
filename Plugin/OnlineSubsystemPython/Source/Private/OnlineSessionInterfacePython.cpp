@@ -21,7 +21,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "OnlineAsyncTaskManager.h"
 #include "SocketSubsystem.h"
 #include "NboSerializerPython.h"
-#include <SharedPointer.h>
+#include "Templates/SharedPointer.h"
 #include "Runtime/Sockets/Public/IPAddress.h"
 #include "OnlineSubsystemPythonConfig.h"
 #include "Engine/World.h"
@@ -258,7 +258,7 @@ bool FOnlineSessionPython::CreateSession(int32 HostingPlayerNum, FName SessionNa
 		{
 			Result = ONLINE_IO_PENDING;
 			FHttpModule* Http = &FHttpModule::Get();
-			TSharedRef<IHttpRequest> Request = Http->CreateRequest();
+			TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 			Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
 			Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 			//Request->SetHeader(TEXT("Authorization"), "Basic " + APIKey);
@@ -269,10 +269,11 @@ bool FOnlineSessionPython::CreateSession(int32 HostingPlayerNum, FName SessionNa
 			Session->SessionSettings.Get("GAMEMODE", GameMode);
 			bool bPasswordProtected;
 			Session->SessionSettings.Get("PASSWORDPROTECTED", bPasswordProtected);
+			FString StrPasswordProtected = bPasswordProtected ? "true" : "false";
 			FOnlineSessionInfoPython* SessionInfo = (FOnlineSessionInfoPython*)Session->SessionInfo.Get();
 			UOnlineSubsystemPythonConfig* config = GetMutableDefault<UOnlineSubsystemPythonConfig>();
 			SetPortFromNetDriver(*PythonSubsystem, Session->SessionInfo);
-			Request->SetURL(FString::Printf(TEXT("http://%s/register_server?name=%s&port=%d&maxplayers=%d&pwprotected=%s&gamemode=%s&map=%s"), *config->ServerAddress, *FGenericPlatformHttp::UrlEncode(ServerName), SessionInfo->HostAddr->GetPort(), Session->NumOpenPublicConnections, *FGenericPlatformHttp::UrlEncode(bPasswordProtected ? "true" : "false"), *FGenericPlatformHttp::UrlEncode(GameMode), *FGenericPlatformHttp::UrlEncode(MapName)));
+			Request->SetURL(FString::Printf(TEXT("http://%s/register_server?name=%s&port=%d&maxplayers=%d&pwprotected=%s&gamemode=%s&map=%s"), *config->ServerAddress, *FGenericPlatformHttp::UrlEncode(ServerName), SessionInfo->HostAddr->GetPort(), Session->NumOpenPublicConnections, *FGenericPlatformHttp::UrlEncode(StrPasswordProtected), *FGenericPlatformHttp::UrlEncode(GameMode), *FGenericPlatformHttp::UrlEncode(MapName)));
 			Request->OnProcessRequestComplete().BindRaw(this, &FOnlineSessionPython::CreateSession_ResponseReceived);
 			Request->ProcessRequest();
 		}
@@ -466,7 +467,7 @@ bool FOnlineSessionPython::UpdateSession(FName SessionName, FOnlineSessionSettin
 		// @TODO ONLINE update LAN settings
 		Session->SessionSettings = UpdatedSessionSettings;
 		FHttpModule* Http = &FHttpModule::Get();
-		TSharedRef<IHttpRequest> Request = Http->CreateRequest();
+		TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 		Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
 		Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 		//Request->SetHeader(TEXT("Authorization"), "Basic " + APIKey);
@@ -477,6 +478,7 @@ bool FOnlineSessionPython::UpdateSession(FName SessionName, FOnlineSessionSettin
 		Session->SessionSettings.Get("GAMEMODE", GameMode);
 		bool bPasswordProtected;
 		Session->SessionSettings.Get("PASSWORDPROTECTED", bPasswordProtected);
+		FString StrPasswordProtected = bPasswordProtected ? "true" : "false";
 
 		FOnlineSessionInfoPython* SessionInfo = (FOnlineSessionInfoPython*)Session->SessionInfo.Get();
 		int32 PlayerCount;
@@ -486,7 +488,7 @@ bool FOnlineSessionPython::UpdateSession(FName SessionName, FOnlineSessionSettin
 
 		UOnlineSubsystemPythonConfig* config = GetMutableDefault<UOnlineSubsystemPythonConfig>();
 
-		Request->SetURL(FString::Printf(TEXT("http://%s/update_server?name=%s&port=%d&maxplayers=%d&pwprotected=%s&gamemode=%s&map=%s&playercount=%d"), *config->ServerAddress, *FGenericPlatformHttp::UrlEncode(ServerName), SessionInfo->HostAddr->GetPort(), Session->NumOpenPublicConnections, *FGenericPlatformHttp::UrlEncode(bPasswordProtected ? "true" : "false"), *FGenericPlatformHttp::UrlEncode(GameMode), *FGenericPlatformHttp::UrlEncode(MapName), PlayerCount));
+		Request->SetURL(FString::Printf(TEXT("http://%s/update_server?name=%s&port=%d&maxplayers=%d&pwprotected=%s&gamemode=%s&map=%s&playercount=%d"), *config->ServerAddress, *FGenericPlatformHttp::UrlEncode(ServerName), SessionInfo->HostAddr->GetPort(), Session->NumOpenPublicConnections, *FGenericPlatformHttp::UrlEncode(StrPasswordProtected), *FGenericPlatformHttp::UrlEncode(GameMode), *FGenericPlatformHttp::UrlEncode(MapName), PlayerCount));
 		Request->OnProcessRequestComplete().BindRaw(this, &FOnlineSessionPython::UpdateSession_ResponseReceived);
 		Request->ProcessRequest();
 		
@@ -576,7 +578,7 @@ bool FOnlineSessionPython::DestroySession(FName SessionName, const FOnDestroySes
 		if (IsRunningDedicatedServer())
 		{
 			FHttpModule* Http = &FHttpModule::Get();
-			TSharedRef<IHttpRequest> Request = Http->CreateRequest();
+			TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 			Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
 			Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 			//Request->SetHeader(TEXT("Authorization"), "Basic " + APIKey);
@@ -696,7 +698,7 @@ bool FOnlineSessionPython::FindSessions(int32 SearchingPlayerNum, const TSharedR
 		else
 		{
 			FHttpModule* Http = &FHttpModule::Get();
-			TSharedRef<IHttpRequest> Request = Http->CreateRequest();
+			TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 			Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
 			Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 			//Request->SetHeader(TEXT("Authorization"), "Basic " + APIKey);
@@ -1501,7 +1503,7 @@ void FOnlineSessionPython::StartHeartbeat(float DeltaBetweenHeartbeats)
 void FOnlineSessionPython::PerformHeartbeat()
 {
 	FHttpModule* Http = &FHttpModule::Get();
-	TSharedRef<IHttpRequest> Request = Http->CreateRequest();
+	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 	Request->SetHeader(TEXT("User-Agent"), TEXT("X-UnrealEngine-Agent"));
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	Request->SetVerb("GET");
