@@ -363,7 +363,7 @@ void UAdvancedSessionsLibrary::GetUniqueNetID(APlayerController *PlayerControlle
 
 	if (APlayerState* PlayerState = (PlayerController != NULL) ? PlayerController->PlayerState : NULL)
 	{
-		UniqueNetId.SetUniqueNetId(PlayerState->UniqueId.GetUniqueNetId());
+		UniqueNetId.SetUniqueNetId(PlayerState->GetUniqueId().GetUniqueNetId());
 		if (!UniqueNetId.IsValid())
 		{
 			UE_LOG(AdvancedSessionsLog, Warning, TEXT("GetUniqueNetIdFromController couldn't get the player uniquenetid!"));
@@ -380,7 +380,7 @@ void UAdvancedSessionsLibrary::GetUniqueNetIDFromPlayerState(APlayerState *Playe
 		return;
 	}
 
-	UniqueNetId.SetUniqueNetId(PlayerState->UniqueId.GetUniqueNetId());
+	UniqueNetId.SetUniqueNetId(PlayerState->GetUniqueId().GetUniqueNetId());
 	if (!UniqueNetId.IsValid())
 	{
 		UE_LOG(AdvancedSessionsLog, Warning, TEXT("GetUniqueNetIdFromPlayerState couldn't get the player uniquenetid!"));
