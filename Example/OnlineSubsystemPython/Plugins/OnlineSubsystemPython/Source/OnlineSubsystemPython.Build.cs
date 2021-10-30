@@ -20,7 +20,7 @@ public class OnlineSubsystemPython : ModuleRules
 	public OnlineSubsystemPython(ReadOnlyTargetRules Target) : base(Target)
     {
 		PrivateDefinitions.Add("OnlineSubsystemPython_PACKAGE=1");
-		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PublicDependencyModuleNames.AddRange(
             new string[] {
