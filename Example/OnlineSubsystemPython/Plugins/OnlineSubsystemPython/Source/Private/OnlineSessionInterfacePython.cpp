@@ -1533,9 +1533,7 @@ void FOnlineSessionPython::SetPortFromNetDriver(const FOnlineSubsystemPython& Su
 	if (GEngine)
 	{
 		UWorld* World = GetWorldForOnline(Subsystem.GetInstanceName());
-		FString LString, RString;
-		World->GetAddressURL().Split(":", &LString, &RString, ESearchCase::IgnoreCase);
-		NetDriverPort = FCString::Atoi(*RString);
+		NetDriverPort = World->URL.Port;
 	}
 #endif
 	auto SessionInfoPython = StaticCastSharedPtr<FOnlineSessionInfoPython>(SessionInfo);
