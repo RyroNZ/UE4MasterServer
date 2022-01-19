@@ -20,7 +20,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include "OnlineSubsystem.h"
 #include "OnlineSubsystemPython.h"
 #include "OnlineSubsystemPythonConfig.h"
-#include "UObjectBase.h"
+#include "UObject/UObjectBase.h"
 #if WITH_EDITOR
 #include "ISettingsModule.h"
 #include "ISettingsSection.h"
